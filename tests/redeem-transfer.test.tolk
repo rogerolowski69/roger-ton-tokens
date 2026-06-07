@@ -9,7 +9,7 @@ import "@wrappers/utils"
 import "test-utils"
 
 get fun `test redeem: buyer can transfer TIME to issuer wallet`() {
-    val (minter, deployer, buyer) = setupTest();
+    val (minter, _, buyer) = setupTest();
     val issuer = testing.treasury("issuer");
 
     val buyResult = minter.buyTimeWithPayment(

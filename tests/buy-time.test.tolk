@@ -10,7 +10,7 @@ import "@wrappers/utils"
 import "test-utils"
 
 get fun `test buy-time: payer should receive one time token`() {
-    val (minter, deployer, buyer) = setupTest();
+    val (minter, _, buyer) = setupTest();
     val supplyBefore = minter.getTotalSupply();
     val buyerWallet = userWallet(minter, buyer.address);
 

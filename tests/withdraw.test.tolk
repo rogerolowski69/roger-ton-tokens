@@ -50,7 +50,7 @@ get fun `test withdraw: admin can withdraw tons after buy-time`() {
 }
 
 get fun `test withdraw: non-admin cannot withdraw tons`() {
-    val (minter, deployer, buyer) = setupTest();
+    val (minter, _, buyer) = setupTest();
 
     val withdrawResult = minter.sendWithdrawTon(
         buyer.address,
