@@ -11,7 +11,11 @@ import "test-utils"
 get fun `test withdraw: admin can withdraw tons after buy-time`() {
     val (minter, deployer, buyer) = setupTest();
 
-    val buyResult = minter.buyTimeWithPayment(buyer.address, TEST_MINT_PRICE, TEST_BUY_TIME_GAS_BUFFER);
+    val buyResult = minter.buyTimeWithPayment(
+        buyer.address,
+        TEST_MINT_PRICE,
+        TEST_BUY_TIME_GAS_BUFFER,
+    );
     expect(buyResult).toHaveSuccessfulTx<BuyTime>({
         from: buyer.address,
         to: minter.address,

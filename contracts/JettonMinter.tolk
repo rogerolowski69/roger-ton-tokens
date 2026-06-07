@@ -95,8 +95,7 @@ fun mintJettonsTo(
     var storage = lazy MinterStorage.load();
     assert (mintRecipient.getWorkchain() == MY_WORKCHAIN) throw Errors.WrongWorkchain;
 
-    val internalTransferMsg = lazy internalTransferMsgCell
-        .load({ throwIfOpcodeDoesNotMatch: Errors.InvalidOp });
+    val internalTransferMsg = lazy internalTransferMsgCell.load({ throwIfOpcodeDoesNotMatch: Errors.InvalidOp });
     val forwardTonAmount = internalTransferMsg.forwardTonAmount;
     internalTransferMsg.forwardPayload.checkIsCorrectTlbEither();
 
@@ -219,8 +218,14 @@ fun onInternalMessage(in: InMessage) {
             assert (storage.tokensPerMint > 0) throw Errors.InsufficientPayment;
 
             val forwardTonAmount = 0;
-            val minTransferTon = calcMinimalTransferAmount(forwardTonAmount, in.originalForwardFee) + 1;
-            assert (in.valueCoins >= storage.mintPrice + minTransferTon) throw Errors.InsufficientPayment;
+            val minTransferTon = calcMinimalTransferAmount(
+                forwardTonAmount,
+                in.originalForwardFee,
+            ) +
+            1;
+            assert (
+                in.valueCoins >= storage.mintPrice + minTransferTon
+            ) throw Errors.InsufficientPayment;
 
             val forwardPayload = beginCell().storeUint(0, 1).endCell().beginParse();
             mintJettonsTo(

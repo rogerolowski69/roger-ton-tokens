@@ -14,7 +14,11 @@ get fun `test buy-time: payer should receive one time token`() {
     val supplyBefore = minter.getTotalSupply();
     val buyerWallet = userWallet(minter, buyer.address);
 
-    val buyResult = minter.buyTimeWithPayment(buyer.address, TEST_MINT_PRICE, TEST_BUY_TIME_GAS_BUFFER);
+    val buyResult = minter.buyTimeWithPayment(
+        buyer.address,
+        TEST_MINT_PRICE,
+        TEST_BUY_TIME_GAS_BUFFER,
+    );
     expect(buyResult).toHaveSuccessfulTx<BuyTime>({
         from: buyer.address,
         to: minter.address,

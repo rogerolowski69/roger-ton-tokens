@@ -12,7 +12,11 @@ get fun `test redeem: buyer can transfer TIME to issuer wallet`() {
     val (minter, deployer, buyer) = setupTest();
     val issuer = testing.treasury("issuer");
 
-    val buyResult = minter.buyTimeWithPayment(buyer.address, TEST_MINT_PRICE, TEST_BUY_TIME_GAS_BUFFER);
+    val buyResult = minter.buyTimeWithPayment(
+        buyer.address,
+        TEST_MINT_PRICE,
+        TEST_BUY_TIME_GAS_BUFFER,
+    );
     expect(buyResult).toHaveSuccessfulTx<BuyTime>({
         from: buyer.address,
         to: minter.address,
