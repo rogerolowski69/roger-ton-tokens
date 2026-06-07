@@ -51,7 +51,7 @@ Set `TONCENTER_API_KEY` in `.env`, then:
 
 ```bash
 just deploy-testnet
-just jetton-info-testnet   # acton script scripts/info.tolk --net testnet
+just jetton-info-testnet
 ```
 
 Copy minter address to `JETTON_MASTER_ADDRESS` in `.env` for the API minter worker.

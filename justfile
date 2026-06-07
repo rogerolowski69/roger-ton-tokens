@@ -124,6 +124,9 @@ deploy-testnet:
 jetton-info:
     acton run jetton-info
 
+jetton-info-testnet:
+    acton run jetton-info-testnet
+
 jetton-mint:
     acton run jetton-mint
 

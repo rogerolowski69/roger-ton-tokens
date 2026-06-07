@@ -3,6 +3,9 @@
 Telegram Mini App + ledger-backed store credit API + Acton TIME jetton contracts.
 
 [![CI](https://github.com/rogerolowski69/roger-ton-tokens/actions/workflows/ci.yml/badge.svg)](https://github.com/rogerolowski69/roger-ton-tokens/actions/workflows/ci.yml)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/project/537db6ce-b6a8-4c81-bec7-0cddfc7b9f12)
+
+**Railway:** [agile-trust project](https://railway.com/project/537db6ce-b6a8-4c81-bec7-0cddfc7b9f12) · API: https://roger-ton-tokens-production.up.railway.app
 
 ## Stack
 
@@ -67,6 +70,8 @@ Contract docs: [`contracts/README.md`](contracts/README.md)
 Env vars use `PUBLIC_*` prefix (see `frontend/.env.example`).
 
 ## Deploy on Railway
+
+**Project dashboard:** [agile-trust](https://railway.com/project/537db6ce-b6a8-4c81-bec7-0cddfc7b9f12)
 
 Two services from the **same GitHub repo** (monorepo):
 
