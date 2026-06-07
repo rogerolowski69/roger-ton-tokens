@@ -18,7 +18,6 @@ frontend/.env
 .acton/
 build/
 gen/
-wrappers/*.gen.tolk
 
 node_modules/
 
