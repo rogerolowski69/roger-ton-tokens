@@ -89,8 +89,8 @@ jobs:
       run:
         working-directory: frontend
     env:
-      VITE_API_BASE_URL: https://api.example.com
-      VITE_MINI_APP_URL: https://app.example.com
+      PUBLIC_API_BASE_URL: https://api.example.com
+      PUBLIC_MINI_APP_URL: https://app.example.com
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 

@@ -1,0 +1,29 @@
+---
+import "@/styles/globals.css";
+
+interface Props {
+  title?: string;
+}
+
+const { title = "Roger TON Tokens" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="theme-color" content="#0b1220" />
+    <title>{title}</title>
+    <script is:inline src="https://telegram.org/js/telegram-web-app.js" defer></script>
+  </head>
+  <body
+    class="min-h-screen"
+    style="--tg-theme-bg-color: hsl(var(--background)); --tg-theme-text-color: hsl(var(--foreground));"
+  >
+    <slot />
+  </body>
+</html>

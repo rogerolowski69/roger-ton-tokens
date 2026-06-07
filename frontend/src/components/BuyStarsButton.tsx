@@ -1,96 +1,76 @@
-import { useCallback, useEffect, useState } from 'react';
-import { apiFetch, BalanceResponse } from '../lib/api';
+import { useCallback, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { apiFetch, type ProductSku } from "@/lib/api";
+import { refreshCheckoutState, useAppStore } from "@/stores/app-store";
 
 type Props = {
-  sku: 'credit_1_usd' | 'hour_voucher_1h';
-  label?: string;
-  onSuccess?: () => void;
+  sku: ProductSku;
+  starsLabel: string;
 };
 
-export function BuyStarsButton({ sku, label, onSuccess }: Props) {
-  const [status, setStatus] = useState('');
+export function BuyStarsButton({ sku, starsLabel }: Props) {
   const [busy, setBusy] = useState(false);
+  const setStatusMessage = useAppStore((s) => s.setStatusMessage);
 
   const buyWithStars = useCallback(async () => {
     const tg = window.Telegram?.WebApp;
     if (!tg?.initData) {
-      setStatus('Open this inside Telegram.');
+      setStatusMessage("Open this inside Telegram.");
       return;
     }
 
     setBusy(true);
-    setStatus('Creating invoice…');
+    setStatusMessage("Creating invoice…");
 
     try {
       const { invoice_link } = await apiFetch<{ invoice_link: string }>(
-        '/api/checkout/stars/invoice-link',
-        { method: 'POST', body: JSON.stringify({ sku }) },
+        "/api/checkout/stars/invoice-link",
+        { method: "POST", body: JSON.stringify({ sku }) },
       );
 
       tg.openInvoice(invoice_link, (invoiceStatus) => {
         setBusy(false);
-        if (invoiceStatus === 'paid') {
-          setStatus('Payment sent — confirming on server…');
-          tg.HapticFeedback?.notificationOccurred('success');
-          onSuccess?.();
-        } else if (invoiceStatus === 'cancelled') {
-          setStatus('Payment cancelled.');
+        if (invoiceStatus === "paid") {
+          setStatusMessage("Payment sent — confirming on server…");
+          tg.HapticFeedback?.notificationOccurred("success");
+          void refreshCheckoutState();
+        } else if (invoiceStatus === "cancelled") {
+          setStatusMessage("Payment cancelled.");
         }
       });
     } catch (e) {
       setBusy(false);
-      setStatus((e as Error).message);
+      setStatusMessage((e as Error).message);
     }
-  }, [sku, onSuccess]);
+  }, [sku, setStatusMessage]);
 
   const payWithStoreCredit = useCallback(async () => {
     setBusy(true);
-    setStatus('Spending store credit…');
+    setStatusMessage("Spending store credit…");
 
     try {
-      const data = await apiFetch<{ order_id: string }>('/api/checkout/store-credit/pay', {
-        method: 'POST',
+      const data = await apiFetch<{ order_id: string }>("/api/checkout/store-credit/pay", {
+        method: "POST",
         body: JSON.stringify({ sku }),
       });
-      setStatus(`Paid with credit — order ${data.order_id.slice(0, 8)}…`);
-      window.Telegram?.WebApp?.HapticFeedback?.notificationOccurred('success');
-      onSuccess?.();
+      setStatusMessage(`Paid with credit — order ${data.order_id.slice(0, 8)}…`);
+      window.Telegram?.WebApp?.HapticFeedback?.notificationOccurred("success");
+      await refreshCheckoutState();
     } catch (e) {
-      setStatus((e as Error).message);
+      setStatusMessage((e as Error).message);
     } finally {
       setBusy(false);
     }
-  }, [sku, onSuccess]);
+  }, [sku, setStatusMessage]);
 
   return (
-    <div className="buy-stars-group">
-      <button type="button" className="btn primary" disabled={busy} onClick={buyWithStars}>
-        {label ?? 'Buy with Stars ⭐'}
-      </button>
-      <button type="button" className="btn secondary" disabled={busy} onClick={payWithStoreCredit}>
-        Pay with Store Credit 🧾
-      </button>
-      {status ? <p className="status">{status}</p> : null}
+    <div className="flex flex-col gap-2">
+      <Button size="full" disabled={busy} onClick={buyWithStars}>
+        Stars — {starsLabel}
+      </Button>
+      <Button size="full" variant="secondary" disabled={busy} onClick={payWithStoreCredit}>
+        Pay with Store Credit
+      </Button>
     </div>
   );
-}
-
-export function useCreditBalance(): { cents: number; usd: string; refresh: () => void } {
-  const [cents, setCents] = useState(0);
-
-  const refresh = useCallback(async () => {
-    if (!window.Telegram?.WebApp?.initData) return;
-    try {
-      const data = await apiFetch<BalanceResponse>('/api/checkout/balance');
-      setCents(data.balance_cents ?? 0);
-    } catch {
-      /* silent */
-    }
-  }, []);
-
-  useEffect(() => {
-    void refresh();
-  }, [refresh]);
-
-  return { cents, usd: `$${(cents / 100).toFixed(2)}`, refresh };
 }

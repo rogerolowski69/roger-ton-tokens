@@ -2,13 +2,13 @@
 
 Telegram Mini App + ledger-backed store credit API + Acton TIME jetton contracts.
 
-[![CI](https://github.com/YOUR_ORG/roger-ton-tokens/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_ORG/roger-ton-tokens/actions/workflows/ci.yml)
+[![CI](https://github.com/rogerolowski69/roger-ton-tokens/actions/workflows/ci.yml/badge.svg)](https://github.com/rogerolowski69/roger-ton-tokens/actions/workflows/ci.yml)
 
 ## Stack
 
 | Layer | Tech |
 |-------|------|
-| Mini App | React + Vite + TonConnect |
+| Mini App | Astro + React islands + Tailwind + shadcn/ui |
 | API | FastAPI + SQLAlchemy + Alembic |
 | Database | PostgreSQL |
 | Contracts | Acton 1.1 / Tolk (TEP-74 jetton) |
@@ -23,7 +23,7 @@ Telegram Mini App + ledger-backed store credit API + Acton TIME jetton contracts
 ├─ contracts/              # JettonMinter + JettonWallet
 ├─ tests/                  # Acton contract tests (53)
 ├─ apps/api/               # FastAPI backend
-├─ frontend/               # React TWA (frontend/railway.toml)
+├─ frontend/               # Astro TWA (Tailwind + shadcn + Zustand)
 ├─ api-tests/              # Pytest
 ├─ alembic/                # Postgres migrations
 ├─ scripts/                # Deploy, webhook, Railway helpers
@@ -55,6 +55,16 @@ just smoke
 | `just repl` | IPython + DB |
 
 Contract docs: [`contracts/README.md`](contracts/README.md)
+
+### Frontend stack
+
+- **Astro** — static shell + `client:only` React island for TWA interactivity
+- **Tailwind CSS** + **shadcn/ui** — Card, Button, Badge, Alert components
+- **Headless UI** — payment status dialog
+- **Zustand** — auth, balance, wallet, status message state
+- **TonConnect** + **@twa-dev/sdk** — wallet & Telegram WebApp
+
+Env vars use `PUBLIC_*` prefix (see `frontend/.env.example`).
 
 ## Deploy on Railway
 
@@ -93,8 +103,8 @@ Two services from the **same GitHub repo** (monorepo):
 
 | Variable | Value |
 |----------|-------|
-| `VITE_API_BASE_URL` | Your API public URL |
-| `VITE_MINI_APP_URL` | Your frontend public URL |
+| `PUBLIC_API_BASE_URL` | Your API public URL |
+| `PUBLIC_MINI_APP_URL` | Your frontend public URL |
 
 5. Generate domain → set `MINI_APP_URL` on **API** service too (CORS)
 

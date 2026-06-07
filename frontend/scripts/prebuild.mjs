@@ -6,6 +6,7 @@ const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const publicDir = path.join(root, "public");
 
 const baseUrl =
+  process.env.PUBLIC_MINI_APP_URL?.replace(/\/$/, "") ||
   process.env.VITE_MINI_APP_URL?.replace(/\/$/, "") ||
   (process.env.RAILWAY_PUBLIC_DOMAIN
     ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`

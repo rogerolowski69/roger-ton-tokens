@@ -1,29 +1,30 @@
-import { useCallback, useState } from 'react';
-import { useTonConnectUI } from '@tonconnect/ui-react';
-import { apiFetch, TonPrepareResponse } from '../lib/api';
+import { useCallback, useState } from "react";
+import { useTonConnectUI } from "@tonconnect/ui-react";
+import { Button } from "@/components/ui/button";
+import { apiFetch, type ProductSku, type TonPrepareResponse } from "@/lib/api";
+import { refreshCheckoutState, useAppStore } from "@/stores/app-store";
 
 type Props = {
-  sku: 'credit_1_usd' | 'hour_voucher_1h';
-  onSuccess?: () => void;
+  sku: ProductSku;
 };
 
-export function BuyTonButton({ sku, onSuccess }: Props) {
+export function BuyTonButton({ sku }: Props) {
   const [tonConnectUI] = useTonConnectUI();
   const [busy, setBusy] = useState(false);
-  const [status, setStatus] = useState('');
+  const setStatusMessage = useAppStore((s) => s.setStatusMessage);
 
   const payWithTon = useCallback(async () => {
     if (!tonConnectUI) {
-      setStatus('TonConnect not ready');
+      setStatusMessage("TonConnect not ready");
       return;
     }
 
     setBusy(true);
-    setStatus('Preparing TON payment…');
+    setStatusMessage("Preparing TON payment…");
 
     try {
-      const prep = await apiFetch<TonPrepareResponse>('/api/checkout/ton/prepare', {
-        method: 'POST',
+      const prep = await apiFetch<TonPrepareResponse>("/api/checkout/ton/prepare", {
+        method: "POST",
         body: JSON.stringify({ sku }),
       });
 
@@ -38,30 +39,29 @@ export function BuyTonButton({ sku, onSuccess }: Props) {
         ],
       });
 
-      setStatus('Confirming on server…');
+      setStatusMessage("Confirming on server…");
 
-      await apiFetch('/api/checkout/ton/confirm', {
-        method: 'POST',
+      await apiFetch("/api/checkout/ton/confirm", {
+        method: "POST",
         body: JSON.stringify({
           order_id: prep.order_id,
           tx_hash: result.boc.slice(0, 64),
         }),
       });
 
-      setStatus('TON payment confirmed ✅');
-      window.Telegram?.WebApp?.HapticFeedback?.notificationOccurred('success');
-      onSuccess?.();
+      setStatusMessage("TON payment confirmed");
+      window.Telegram?.WebApp?.HapticFeedback?.notificationOccurred("success");
+      await refreshCheckoutState();
     } catch (e) {
-      setStatus((e as Error).message);
+      setStatusMessage((e as Error).message);
     } finally {
       setBusy(false);
     }
-  }, [sku, tonConnectUI, onSuccess]);
+  }, [sku, tonConnectUI, setStatusMessage]);
 
   return (
-    <button type="button" className="btn ton" disabled={busy} onClick={payWithTon}>
-      {busy ? 'Processing…' : 'Pay with TON 💎'}
-      {status ? <span className="btn-status">{status}</span> : null}
-    </button>
+    <Button size="full" variant="outline" disabled={busy} onClick={payWithTon}>
+      {busy ? "Processing…" : "Pay with TON"}
+    </Button>
   );
 }
