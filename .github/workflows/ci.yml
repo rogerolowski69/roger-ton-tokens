@@ -1,0 +1,116 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  api:
+    name: API (lint + test)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: roger_tokens
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/roger_tokens
+      BOT_TOKEN: "123456789:ci_test_token"
+      TELEGRAM_WEBHOOK_SECRET: ci_webhook_secret
+      API_BASE_URL: http://localhost:3001
+      MINI_APP_URL: http://localhost:5173
+      RUN_MIGRATIONS_ON_STARTUP: "false"
+      SEED_PRODUCTS_ON_STARTUP: "false"
+      APP_DEBUG: "false"
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: astral-sh/setup-uv@088b9a5f820fa95dafa986c8646a897212a2b7c5 # v6.8.1
+
+      - name: Install API deps
+        run: uv sync --group dev
+
+      - name: Lint
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+
+      - name: Migrate
+        run: uv run alembic upgrade head
+
+      - name: Test API
+        run: uv run pytest -v api-tests
+
+  contracts:
+    name: Contracts (Acton)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: ton-blockchain/setup-acton@2d38fd579e1bf8753a3e0cff9ad695612b98a676 # v1.0.0
+
+      - name: Build
+        run: acton build
+
+      - name: Format check
+        run: acton fmt --check
+
+      - name: Lint
+        run: acton check --output-format github
+
+      - name: Test
+        run: acton test
+
+  frontend:
+    name: Frontend (build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    env:
+      VITE_API_BASE_URL: https://api.example.com
+      VITE_MINI_APP_URL: https://app.example.com
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f4448b090 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+  docker:
+    name: Docker (API image)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Build API image
+        run: docker build -t roger-ton-api:ci .

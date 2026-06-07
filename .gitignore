@@ -1,0 +1,27 @@
+.env
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
+# Railway / local secrets
+.env.railway
+
+# Acton / TON contracts
+.acton/
+build/
+gen/
+wrappers/*.gen.tolk
+
+node_modules/
+
+*Zone.Identifier
+*:Zone.Identifier
+
+.DS_Store

@@ -1,0 +1,54 @@
+[project]
+name = "roger-ton-token-api"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115.0",
+  "uvicorn[standard]>=0.32.0",
+  "httpx>=0.27.0",
+  "pydantic-settings>=2.6.0",
+  "sqlalchemy[asyncio]>=2.0.36",
+  "asyncpg>=0.30.0",
+  "alembic>=1.14.0",
+  "psycopg[binary]>=3.2.0",
+  "python-dotenv>=1.0.1",
+  "structlog>=24.4.0",
+  "tenacity>=9.0.0",
+  "orjson>=3.10.0",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8.3.0",
+  "pytest-asyncio>=0.24.0",
+  "ruff>=0.8.0",
+  "ipython>=8.29.0",
+  "ipdb>=0.13.13",
+  "rich>=13.9.0",
+  "debugpy>=1.8.0",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.ruff.lint.per-file-ignores]
+"alembic/**/*.py" = ["I001", "UP007", "UP035"]
+"apps/api/routers/**/*.py" = ["B008"]
+"apps/api/main.py" = ["B008"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["api-tests"]
+pythonpath = ["."]
+filterwarnings = ["ignore::DeprecationWarning"]
