@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Validate env vars before Railway deploy or post-deploy webhook setup."""
+
 from __future__ import annotations
 
 import os
@@ -37,9 +38,7 @@ def main() -> int:
             print(f"  {key}= (optional, not set)")
 
     db = os.environ["DATABASE_URL"]
-    if db.startswith("postgres://") or (
-        db.startswith("postgresql://") and "+asyncpg" not in db
-    ):
+    if db.startswith("postgres://") or (db.startswith("postgresql://") and "+asyncpg" not in db):
         print("DATABASE_URL: Railway Postgres URL detected (app normalizes to asyncpg)")
 
     api = os.environ["API_BASE_URL"].rstrip("/")

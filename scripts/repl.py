@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Interactive shell with app settings, DB engine, and models loaded."""
+
 from __future__ import annotations
 
 import asyncio

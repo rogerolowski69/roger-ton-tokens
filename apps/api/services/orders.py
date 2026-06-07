@@ -334,9 +334,7 @@ async def fulfill_order_from_payment(
             if existing_payment.order_id != order_id:
                 raise OrderError("Payment reference belongs to another order")
 
-        order = await db.scalar(
-            select(Order).where(Order.id == order_id).with_for_update()
-        )
+        order = await db.scalar(select(Order).where(Order.id == order_id).with_for_update())
 
         if not order:
             raise OrderError("Order not found")

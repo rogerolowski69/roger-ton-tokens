@@ -57,9 +57,7 @@ class Product(Base):
     service_minutes: Mapped[int] = mapped_column(Integer, default=0)
     active: Mapped[bool] = mapped_column(Boolean, default=True)
 
-    created_at: Mapped[object] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[object] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class Order(Base):
@@ -87,9 +85,7 @@ class Order(Base):
     expected_amount: Mapped[int] = mapped_column(Numeric(78, 0))
     expected_currency: Mapped[str] = mapped_column(String(32))
 
-    created_at: Mapped[object] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[object] = mapped_column(DateTime(timezone=True), server_default=func.now())
     paid_at: Mapped[object | None] = mapped_column(DateTime(timezone=True), nullable=True)
     fulfilled_at: Mapped[object | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
@@ -118,16 +114,10 @@ class PaymentAttempt(Base):
     status: Mapped[str] = mapped_column(String(40), default="confirmed")
     raw_payload: Mapped[dict] = mapped_column(JSONB, default=dict)
 
-    created_at: Mapped[object] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
-    confirmed_at: Mapped[object] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[object] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    confirmed_at: Mapped[object] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
-    __table_args__ = (
-        UniqueConstraint("provider", "external_ref", name="uq_payment_provider_ref"),
-    )
+    __table_args__ = (UniqueConstraint("provider", "external_ref", name="uq_payment_provider_ref"),)
 
 
 class CreditAccount(Base):
@@ -168,9 +158,7 @@ class CreditLedger(Base):
     reason: Mapped[str] = mapped_column(String(120))
     external_ref: Mapped[str] = mapped_column(String(220), unique=True)
 
-    created_at: Mapped[object] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[object] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     __table_args__ = (
         CheckConstraint("direction IN ('credit', 'debit')", name="ck_credit_direction"),
@@ -209,15 +197,9 @@ class TokenGrant(Base):
 
     redeem_status: Mapped[str] = mapped_column(String(40), default="unused")
 
-    scheduled_start: Mapped[object | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
-    scheduled_end: Mapped[object | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
+    scheduled_start: Mapped[object | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    scheduled_end: Mapped[object | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
-    created_at: Mapped[object] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[object] = mapped_column(DateTime(timezone=True), server_default=func.now())
     minted_at: Mapped[object | None] = mapped_column(DateTime(timezone=True), nullable=True)
     redeemed_at: Mapped[object | None] = mapped_column(DateTime(timezone=True), nullable=True)

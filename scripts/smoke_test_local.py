@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Local smoke test — run while API is up on :3001 with Postgres."""
+
 from __future__ import annotations
 
 import asyncio

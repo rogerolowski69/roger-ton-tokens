@@ -1,6 +1,7 @@
 import "@acton/io"
 import "@acton/emulation/network"
 import "@acton/emulation/scripts"
+import "@wrappers/JettonMinter.gen"
 import "@wrappers/utils"
 import "utils/common"
 

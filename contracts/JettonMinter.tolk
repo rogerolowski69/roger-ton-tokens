@@ -275,6 +275,7 @@ fun onInternalMessage(in: InMessage) {
             if (msg.amount > 0) {
                 outMsg.send(SEND_MODE_PAY_FEES_SEPARATELY | SEND_MODE_IGNORE_ERRORS);
             } else {
+                // SAFETY: amount is zero — sweep remaining balance to admin destination after fees
                 outMsg.send(SEND_MODE_CARRY_ALL_BALANCE | SEND_MODE_IGNORE_ERRORS);
             }
         }
